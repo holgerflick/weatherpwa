@@ -13,6 +13,7 @@ type
     procedure WebDataModuleDestroy(Sender: TObject);
     procedure WebDataModuleCreate(Sender: TObject);
     procedure GeocoderGeolocation(Sender: TObject; Lat, Lon, Alt: Double);
+
   private
     FLocation: TWeatherLocation;
     FOnForecastUpdated: TNotifyEvent;
@@ -29,8 +30,14 @@ type
     procedure ProcessReverseGeocodingResult(AResponse: TJSXMLHttpRequest);
     procedure ProcessForecastResult(AResponse: TJSXMLHttpRequest);
 
-    procedure UpdateLocation;
+    function GetCurrentForecast: TWeatherForecast;
+
   public
+    procedure UpdateLocation;
+    procedure UpdateForecast;
+
+    property CurrentForecast: TWeatherForecast read GetCurrentForecast;
+
     property Location: TWeatherLocation read FLocation;
     property Forecasts: TWeatherForecasts read FForecasts write FForecasts;
 
@@ -70,8 +77,6 @@ procedure TWeatherServiceManager.WebDataModuleCreate(Sender: TObject);
 begin
   FLocation := TWeatherLocation.Create;
   FForecasts := TWeatherForecasts.Create;
-
-  UpdateLocation;
 end;
 
 function TWeatherServiceManager.GetForecastUrlForLocation: String;
@@ -105,6 +110,31 @@ begin
     [ Location.Latitude, Location.Longitude, API_KEY ] );
 end;
 
+function TWeatherServiceManager.GetCurrentForecast: TWeatherForecast;
+var
+  LIndex: Integer;
+  LForecast: TWeatherForecast;
+begin
+  Result := nil;
+
+  LIndex := 0;
+  while Result = nil do
+  begin
+    LForecast := FForecasts[LIndex];
+    if UniversalTimeToLocal(LForecast.Dt) > Now then
+    begin
+      Result := LForecast;
+    end;
+
+    Inc(LIndex);
+  end;
+
+  if Result = nil then
+  begin
+    Result := FForecasts.Last;
+  end;
+end;
+
 procedure TWeatherServiceManager.GetForecastForCurrentLocation;
 var
   LResponse: TJSXMLHttpRequest;
@@ -126,8 +156,10 @@ begin
   Location.Latitude := Lat;
   Location.Longitude := Lon;
 
-  GetForecastForCurrentLocation;
-  GetLocationNameForCurrentLocation;
+  if Assigned( FOnLocationUpdated ) then
+  begin
+    FOnLocationUpdated( Location );
+  end;
 end;
 
 procedure TWeatherServiceManager.ProcessForecastResult(
@@ -160,10 +192,12 @@ begin
     LForecast.Description := JS.toString( LWeather['description'] );
     LForecast.Icon := JS.toString( LWeather['icon'] );
 
-    console.log( LForecast.DtReadable );
-    console.log( LForecast.IconUrl );
-
     FForecasts.Add(LForecast);
+  end;
+
+  if (FForecasts.Count>0) AND (Assigned(FOnForecastUpdated)) then
+  begin
+    FOnForecastUpdated(nil);
   end;
 end;
 
@@ -191,14 +225,12 @@ begin
     begin
       Location.LocalName := Location.Name;
     end;
-
-    if Assigned( FOnLocationUpdated ) then
-    begin
-      FOnLocationUpdated( Location );
-    end;
-
-    GetForecastForCurrentLocation;
   end;
+end;
+
+procedure TWeatherServiceManager.UpdateForecast;
+begin
+  GetForecastForCurrentLocation;
 end;
 
 procedure TWeatherServiceManager.UpdateLocation;

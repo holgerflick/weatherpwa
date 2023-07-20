@@ -2,6 +2,15 @@ object FrmMain: TFrmMain
   Width = 640
   Height = 480
   OnCreate = WebFormCreate
+  object Icon: TWebImageControl
+    Left = 56
+    Top = 216
+    Width = 100
+    Height = 97
+    HeightPercent = 100.000000000000000000
+    WidthPercent = 100.000000000000000000
+    ChildOrder = 2
+  end
   object btnGetCurrent: TWebButton
     Left = 56
     Top = 48
