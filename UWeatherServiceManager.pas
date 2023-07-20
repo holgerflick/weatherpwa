@@ -15,25 +15,41 @@ type
     procedure GeocoderGeolocation(Sender: TObject; Lat, Lon, Alt: Double);
   private
     FLocation: TWeatherLocation;
+    FOnForecastUpdated: TNotifyEvent;
+    FOnLocationUpdated: TNotifyEvent;
+    FForecasts: TWeatherForecasts;
 
-    [async]
-    procedure GetForecastForCurrentLocation;
+    [async] procedure GetForecastForCurrentLocation;
 
-    [async]
-    procedure GetLocationNameForCurrentLocation;
+    [async] procedure GetLocationNameForCurrentLocation;
 
     function GetForecastUrlForLocation: String;
     function GetReverseGeocodingUrlForLocation: String;
 
+    procedure ProcessReverseGeocodingResult(AResponse: TJSXMLHttpRequest);
+    procedure ProcessForecastResult(AResponse: TJSXMLHttpRequest);
+
     procedure UpdateLocation;
   public
     property Location: TWeatherLocation read FLocation;
+    property Forecasts: TWeatherForecasts read FForecasts write FForecasts;
+
+    property OnLocationUpdated: TNotifyEvent
+      read FOnLocationUpdated write FOnLocationUpdated;
+
+    property OnForecastUpdated: TNotifyEvent
+      read FOnForecastUpdated write FOnForecastUpdated;
   end;
 
 
 implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
+
+uses
+  System.DateUtils
+  ;
+
 const
   REQ_PATTERN_FORECAST = 'https://api.openweathermap.org/data/2.5/forecast?lat=%f&lon=%f&appid=%s&units=metric';
   REQ_PATTERN_REVERSE = 'https://api.openweathermap.org/geo/1.0/reverse?lat=%f&lon=%f&limit=1&appid=%s';
@@ -47,11 +63,13 @@ const
 procedure TWeatherServiceManager.WebDataModuleDestroy(Sender: TObject);
 begin
   FLocation.Free;
+  FForecasts.Free;
 end;
 
 procedure TWeatherServiceManager.WebDataModuleCreate(Sender: TObject);
 begin
   FLocation := TWeatherLocation.Create;
+  FForecasts := TWeatherForecasts.Create;
 
   UpdateLocation;
 end;
@@ -67,8 +85,6 @@ end;
 procedure TWeatherServiceManager.GetLocationNameForCurrentLocation;
 var
   LResponse: TJSXMLHttpRequest;
-  LObject: TJSObject;
-  LArray: TJSArray;
 
 begin
   Request.URL := GetReverseGeocodingUrlForLocation;
@@ -78,21 +94,7 @@ begin
 
   if LResponse.Status = 200 then
   begin
-    LArray := TJSArray( LResponse.response );
-    if LArray.Length > 0 then
-    begin
-      LObject := TJSObject( LArray[0] );
-
-      Location.Name := JS.toString( LObject['name'] );
-      if Assigned( TJSObject( LObject['local_names'] )[LANGID] ) then
-      begin
-        Location.LocalName := JS.toString( TJSObject( LObject['local_names'] )[LANGID] );
-      end
-      else
-      begin
-        Location.LocalName := Location.Name;
-      end;
-    end;
+    ProcessReverseGeocodingResult(LResponse);
   end;
 end;
 
@@ -104,10 +106,18 @@ begin
 end;
 
 procedure TWeatherServiceManager.GetForecastForCurrentLocation;
+var
+  LResponse: TJSXMLHttpRequest;
+
 begin
   Request.URL := GetForecastUrlForLocation;
 
-  console.log(Request.URL);
+  LResponse := await( TJSXMLHttpRequest, Request.Perform );
+
+  if LResponse.Status = 200 then
+  begin
+    ProcessForecastResult(LResponse);
+  end;
 end;
 
 procedure TWeatherServiceManager.GeocoderGeolocation(Sender: TObject; Lat, Lon,
@@ -118,6 +128,77 @@ begin
 
   GetForecastForCurrentLocation;
   GetLocationNameForCurrentLocation;
+end;
+
+procedure TWeatherServiceManager.ProcessForecastResult(
+  AResponse: TJSXMLHttpRequest);
+var
+  LArray: TJSArray;
+  LObj: TJSObject;
+  LMain,
+  LWeather: TJSObject;
+
+  i: Integer;
+
+  LForecast: TWeatherForecast;
+
+begin
+  LArray := TJSArray( TJSObject(AResponse.response)['list'] );
+
+  FForecasts.Clear;
+
+  for i := 0 to LArray.Length-1 do
+  begin
+    LObj := TJSObject( LArray[i] );
+    LMain := TJSObject(LObj['main']);
+    LWeather := TJSObject( TJSArray(LObj['weather'])[0] );
+
+    LForecast := TWeatherForecast.Create;
+    LForecast.Dt := UnixToDateTime( JS.toInteger( LObj['dt'] ) );
+    LForecast.Temperature := JS.toNumber( LMain['temp'] );
+    LForecast.Humidity := JS.toNumber( LMain['humidity'] );
+    LForecast.Description := JS.toString( LWeather['description'] );
+    LForecast.Icon := JS.toString( LWeather['icon'] );
+
+    console.log( LForecast.DtReadable );
+    console.log( LForecast.IconUrl );
+
+    FForecasts.Add(LForecast);
+  end;
+end;
+
+procedure TWeatherServiceManager.ProcessReverseGeocodingResult(AResponse:
+    TJSXMLHttpRequest);
+var
+  LObject: TJSObject;
+  LArray: TJSArray;
+
+begin
+  LArray := TJSArray( AResponse.response );
+  if LArray.Length > 0 then
+  begin
+    LObject := TJSObject( LArray[0] );
+
+    Location.Name := JS.toString( LObject['name'] );
+    Location.Country := JS.toString( LObject['country'] );
+    Location.State := JS.toString( LObject['state'] );
+
+    if Assigned( TJSObject( LObject['local_names'] )[LANGID] ) then
+    begin
+      Location.LocalName := JS.toString( TJSObject( LObject['local_names'] )[LANGID] );
+    end
+    else
+    begin
+      Location.LocalName := Location.Name;
+    end;
+
+    if Assigned( FOnLocationUpdated ) then
+    begin
+      FOnLocationUpdated( Location );
+    end;
+
+    GetForecastForCurrentLocation;
+  end;
 end;
 
 procedure TWeatherServiceManager.UpdateLocation;
