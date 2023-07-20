@@ -118,6 +118,11 @@ begin
   Result := nil;
 
   LIndex := 0;
+
+  // This simple algorithm works because the forecast items are returned in
+  // order. The first index in the list denotes the most current weather forecast
+  // whereas the last index is the most distant in the future.
+  // For the particular endpoint chosen this means 3 days out.
   while Result = nil do
   begin
     LForecast := FForecasts[LIndex];
