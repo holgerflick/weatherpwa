@@ -23,6 +23,7 @@ type
   public
     { Public declarations }
     procedure UpdateForecast;
+    procedure UpdateLocation;
   end;
 
 var
@@ -31,6 +32,7 @@ var
 implementation
 
 uses
+
   UWeatherServiceTypes
   ;
 
@@ -41,9 +43,11 @@ var
   LForecast: TWeatherForecast;
 
 begin
-   LForecast := FService.CurrentForecast;
-   txtCurrent.Text := LForecast.Description;
-   Icon.URL := LForecast.IconUrl;
+  console.log('Updated UI.');
+
+  LForecast := FService.CurrentForecast;
+  txtCurrent.Text := LForecast.Description;
+  Icon.URL := LForecast.IconUrl;
 end;
 
 procedure TFrmMain.OnLocationUpdated(Sender: TObject);
@@ -63,13 +67,23 @@ begin
   end;
 end;
 
+procedure TFrmMain.UpdateLocation;
+begin
+  if Application.IsOnline then
+  begin
+    FService.UpdateLocation;
+  end;
+end;
+
 procedure TFrmMain.WebFormCreate(Sender: TObject);
 begin
   FService := TWeatherServiceManager.Create(self);
   FService.OnLocationUpdated := OnLocationUpdated;
   FService.OnForecastUpdated := OnForecastUpdated;
 
-  FService.UpdateLocation;
+  FService.LoadLastForecastResponse;
+
+  UpdateLocation;
 end;
 
 end.

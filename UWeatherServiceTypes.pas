@@ -48,7 +48,10 @@ type
     property DtReadable: String read GetDtReadable;
   end;
 
+  TWeatherForecastsArray = array of TWeatherForecast;
+
   TWeatherForecasts = TObjectList<TWeatherForecast>;
+
 
 implementation
 
@@ -66,5 +69,6 @@ function TWeatherForecast.GetIconUrl: String;
 begin
   Result := Format( URL_ICON, [Icon] );
 end;
+
 
 end.

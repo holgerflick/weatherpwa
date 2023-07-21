@@ -28,11 +28,14 @@ type
     function GetReverseGeocodingUrlForLocation: String;
 
     procedure ProcessReverseGeocodingResult(AResponse: TJSXMLHttpRequest);
-    procedure ProcessForecastResult(AResponse: TJSXMLHttpRequest);
+    procedure ProcessForecastResult(AResponse: JSValue; ADoStore: Boolean = true);
 
+    procedure StoreLastForecastResponse(AResponse: JSValue);
     function GetCurrentForecast: TWeatherForecast;
 
   public
+    procedure LoadLastForecastResponse;
+
     procedure UpdateLocation;
     procedure UpdateForecast;
 
@@ -54,12 +57,16 @@ implementation
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 uses
-  System.DateUtils
+    DateUtils
+  , WebLib.Storage
   ;
 
 const
   REQ_PATTERN_FORECAST = 'https://api.openweathermap.org/data/2.5/forecast?lat=%f&lon=%f&appid=%s&units=metric';
   REQ_PATTERN_REVERSE = 'https://api.openweathermap.org/geo/1.0/reverse?lat=%f&lon=%f&limit=1&appid=%s';
+  STORAGE_KEY_FORECAST = 'cached_forecast';
+  STORAGE_KEY_DT_FORECAST = 'cached_forecast_dt';
+  STORAGE_KEY_MAP = 'cached_map';
 
   LANGID = 'en';
 
@@ -110,6 +117,23 @@ begin
     [ Location.Latitude, Location.Longitude, API_KEY ] );
 end;
 
+procedure TWeatherServiceManager.LoadLastForecastResponse;
+var
+  LStoredForecast: String;
+  LJSON: JSValue;
+begin
+  LStoredForecast := TLocalStorage.GetValue(STORAGE_KEY_FORECAST);
+
+  if not LStoredForecast.IsEmpty then
+  begin
+    console.log('Loaded locally stored forecast.');
+    LJSON := TJSJSON.parse(LStoredForecast);
+
+    // process, but do not store locally - it's already stored
+    ProcessForecastResult(LJSON, False);
+  end;
+end;
+
 function TWeatherServiceManager.GetCurrentForecast: TWeatherForecast;
 var
   LIndex: Integer;
@@ -151,7 +175,8 @@ begin
 
   if LResponse.Status = 200 then
   begin
-    ProcessForecastResult(LResponse);
+    console.info('Loading from webservice response.');
+    ProcessForecastResult(LResponse.response);
   end;
 end;
 
@@ -167,8 +192,8 @@ begin
   end;
 end;
 
-procedure TWeatherServiceManager.ProcessForecastResult(
-  AResponse: TJSXMLHttpRequest);
+procedure TWeatherServiceManager.ProcessForecastResult(AResponse: JSValue;
+    ADoStore: Boolean = true);
 var
   LArray: TJSArray;
   LObj: TJSObject;
@@ -180,7 +205,7 @@ var
   LForecast: TWeatherForecast;
 
 begin
-  LArray := TJSArray( TJSObject(AResponse.response)['list'] );
+  LArray := TJSArray( TJSObject(AResponse)['list'] );
 
   FForecasts.Clear;
 
@@ -200,9 +225,17 @@ begin
     FForecasts.Add(LForecast);
   end;
 
-  if (FForecasts.Count>0) AND (Assigned(FOnForecastUpdated)) then
+  if (FForecasts.Count>0) then
   begin
-    FOnForecastUpdated(nil);
+    if ADoStore then
+    begin
+      StoreLastForecastResponse(AResponse);
+    end;
+
+    if (Assigned(FOnForecastUpdated)) then
+    begin
+      FOnForecastUpdated(nil);
+    end;
   end;
 end;
 
@@ -231,6 +264,20 @@ begin
       Location.LocalName := Location.Name;
     end;
   end;
+end;
+
+procedure TWeatherServiceManager.StoreLastForecastResponse(AResponse: JSValue);
+
+begin
+  TLocalStorage.SetValue( STORAGE_KEY_FORECAST,
+     TJSJSON.stringify(AResponse)
+     );
+
+  // as the date/time is only used locally, we can use the local time of the
+  // system
+  TLocalStorage.SetValue( STORAGE_KEY_DT_FORECAST,
+    DateTimeToRFC3339( Now ) );
+  console.info('Stored forecast locally.');
 end;
 
 procedure TWeatherServiceManager.UpdateForecast;
