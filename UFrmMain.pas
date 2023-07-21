@@ -5,23 +5,25 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, Vcl.StdCtrls, WEBLib.StdCtrls, Vcl.Controls,
-  UWeatherServiceManager, WEBLib.ExtCtrls;
+  UWeatherServiceManager, WEBLib.ExtCtrls, DB, WEBLib.Grids;
 
 type
   TFrmMain = class(TWebForm)
-    btnGetCurrent: TWebButton;
-    txtCurrent: TWebEdit;
     Icon: TWebImageControl;
+    txtDescription: TWebLabel;
+    txtLocationText: TWebLabel;
+    txtLocationNumbers: TWebLabel;
+    Grid: TWebTableControl;
     procedure WebFormCreate(Sender: TObject);
   private
-    { Private declarations }
     FService: TWeatherServiceManager;
 
     procedure OnLocationUpdated( Sender: TObject );
     procedure OnForecastUpdated( Sender: TObject );
 
+    function OnLineStatus: String;
+
   public
-    { Public declarations }
     procedure UpdateForecast;
     procedure UpdateLocation;
   end;
@@ -46,8 +48,45 @@ begin
   console.log('Updated UI.');
 
   LForecast := FService.CurrentForecast;
-  txtCurrent.Text := LForecast.Description;
   Icon.URL := LForecast.IconUrl;
+
+  txtDescription.Caption := LForecast.Description;
+  txtLocationText.Caption :=
+    FService.Location.Name + ', ' +
+    FService.Location.Country;
+
+  txtLocationNumbers.Caption := Format(
+    '(Lat: %f.3, Lon: %f.3)',
+    [
+      FService.Location.Latitude,
+      FService.Location.Longitude
+    ] );
+
+  Grid.Cells[ 0, 0 ] := 'Forecast for';
+  Grid.Cells[ 1, 0 ] := LForecast.DtReadable;
+
+  Grid.Cells[ 0, 1 ] := 'Temperature';
+  Grid.Cells[ 1, 1 ] := LForecast.Temperature.ToString + ' C';
+
+  Grid.Cells[ 0, 2 ] := 'Humidity';
+  Grid.Cells[ 1, 2 ] := LForecast.Humidity.ToString + '%';
+
+  Grid.Cells[ 0, 3 ] := '% of Precipation';
+  Grid.Cells[ 1, 3 ] := LForecast.PropPrec.ToString + '%';
+
+
+end;
+
+function TFrmMain.OnLineStatus: String;
+begin
+  if Application.IsOnline then
+  begin
+    Result := 'online';
+  end
+  else
+  begin
+    Result := 'offline';
+  end;
 end;
 
 procedure TFrmMain.OnLocationUpdated(Sender: TObject);
@@ -60,10 +99,6 @@ begin
   if Application.IsOnline then
   begin
     FService.UpdateForecast;
-  end
-  else
-  begin
-    txtCurrent.Text := 'offline';
   end;
 end;
 
