@@ -56,7 +56,7 @@ begin
     FService.Location.Country;
 
   txtLocationNumbers.Caption := Format(
-    '(Lat: %f.3, Lon: %f.3)',
+    '(Lat: %.2f, Lon: %.2f)',
     [
       FService.Location.Latitude,
       FService.Location.Longitude
