@@ -1,13 +1,13 @@
 object FrmMain: TFrmMain
   Width = 640
-  Height = 383
+  Height = 425
   Caption = 'Your Weather'
   CSSLibrary = cssBootstrap
   ElementFont = efCSS
   OnCreate = WebFormCreate
   object Icon: TWebImageControl
     Left = 160
-    Top = 85
+    Top = 119
     Width = 100
     Height = 100
     HeightPercent = 100.000000000000000000
@@ -16,7 +16,7 @@ object FrmMain: TFrmMain
   end
   object txtDescription: TWebLabel
     Left = 8
-    Top = 191
+    Top = 225
     Width = 400
     Height = 15
     Alignment = taCenter
@@ -30,7 +30,7 @@ object FrmMain: TFrmMain
   end
   object txtLocationText: TWebLabel
     Left = 8
-    Top = 33
+    Top = 65
     Width = 400
     Height = 15
     Alignment = taCenter
@@ -45,7 +45,7 @@ object FrmMain: TFrmMain
   end
   object txtLocationNumbers: TWebLabel
     Left = 8
-    Top = 64
+    Top = 98
     Width = 400
     Height = 15
     Alignment = taCenter
@@ -58,9 +58,24 @@ object FrmMain: TFrmMain
     HTMLType = tSPAN
     WidthPercent = 100.000000000000000000
   end
+  object txtHeader: TWebLabel
+    Left = 8
+    Top = 16
+    Width = 400
+    Height = 15
+    Alignment = taCenter
+    AutoSize = False
+    Caption = 'Your Weather Forecast'
+    ElementClassName = 'display-4'
+    ElementFont = efCSS
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    HTMLType = tH1
+    WidthPercent = 100.000000000000000000
+  end
   object Grid: TWebTableControl
     Left = 8
-    Top = 227
+    Top = 259
     Width = 400
     Height = 134
     HeightStyle = ssAuto

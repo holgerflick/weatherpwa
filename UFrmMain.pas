@@ -14,6 +14,7 @@ type
     txtLocationText: TWebLabel;
     txtLocationNumbers: TWebLabel;
     Grid: TWebTableControl;
+    txtHeader: TWebLabel;
     procedure WebFormCreate(Sender: TObject);
   private
     FService: TWeatherServiceManager;
