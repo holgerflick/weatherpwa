@@ -1,6 +1,6 @@
 object FrmMain: TFrmMain
-  Width = 640
-  Height = 425
+  Width = 421
+  Height = 419
   Caption = 'Your Weather'
   CSSLibrary = cssBootstrap
   ElementFont = efCSS
