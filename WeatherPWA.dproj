@@ -123,6 +123,50 @@
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>PngImage_3</ResourceId>
         </RcItem>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-grid.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-grid.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-grid.min.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-grid.min.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-grid.rtl.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-grid.rtl.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-grid.rtl.min.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-grid.rtl.min.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-reboot.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-reboot.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-reboot.min.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-reboot.min.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-reboot.rtl.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-reboot.rtl.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-reboot.rtl.min.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-reboot.rtl.min.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-utilities.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-utilities.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-utilities.min.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-utilities.min.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-utilities.rtl.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-utilities.rtl.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-utilities.rtl.min.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap-utilities.rtl.min.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap.min.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap.min.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap.rtl.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap.rtl.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap.rtl.min.css"/>
+        <None Include="bootstrap-5.3.0-dist\css\bootstrap.rtl.min.css.map"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.bundle.js"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.bundle.js.map"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.bundle.min.js"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.bundle.min.js.map"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.esm.js"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.esm.js.map"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.esm.min.js"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.esm.min.js.map"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.js"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.js.map"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.min.js"/>
+        <None Include="bootstrap-5.3.0-dist\js\bootstrap.min.js.map"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
