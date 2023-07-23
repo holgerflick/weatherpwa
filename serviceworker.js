@@ -1,7 +1,9 @@
 ﻿var CACHE_NAME = "$(ProjectName)";
 var CACHED_URLS = [
   "$(ProjectHTML)",
-  $(FileList)
+  $(FileList),
+  "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js",
+  "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
   ];
 
 self.addEventListener('install', function(event) {
