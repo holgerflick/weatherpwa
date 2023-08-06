@@ -109,19 +109,19 @@ var
   LForecast: TWeatherForecast;
 begin
   Result := nil;
-
   LIndex := 0;
 
   // This simple algorithm works because the forecast items are returned in
   // order. The first index in the list denotes the most current weather forecast
   // whereas the last index is the most distant in the future.
   // For the particular endpoint chosen this means 3 days out.
-  while Result = nil do
+  while LIndex < FForecasts.Count do
   begin
     LForecast := FForecasts[LIndex];
     if UniversalTimeToLocal(LForecast.Dt) > Now then
     begin
       Result := LForecast;
+      break;
     end;
 
     Inc(LIndex);
@@ -161,8 +161,9 @@ begin
   end;
 end;
 
-procedure TWeatherServiceManager.ProcessForecastResult(AResponse: JSValue;
-    ADoStore: Boolean = true);
+procedure TWeatherServiceManager.ProcessForecastResult(
+  AResponse: JSValue;
+  ADoStore: Boolean = true);
 var
   LArray: TJSArray;
   LObj: TJSObject;

@@ -1,16 +1,16 @@
 object WeatherServiceManager: TWeatherServiceManager
   OnCreate = WebDataModuleCreate
   OnDestroy = WebDataModuleDestroy
-  Height = 229
-  Width = 394
+  Height = 196
+  Width = 163
   object Geocoder: TWebGeoLocation
     OnGeolocation = GeocoderGeolocation
-    Left = 80
-    Top = 96
+    Left = 72
+    Top = 32
   end
   object Request: TWebHttpRequest
     ResponseType = rtJSON
-    Left = 176
-    Top = 96
+    Left = 72
+    Top = 104
   end
 end
