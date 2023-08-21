@@ -21,7 +21,7 @@ object FrmMain: TFrmMain
     Height = 15
     Alignment = taCenter
     AutoSize = False
-    Caption = 'txtDescription'
+    Caption = 'TWebLabel - txtDescription'
     ElementFont = efCSS
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
@@ -35,7 +35,7 @@ object FrmMain: TFrmMain
     Height = 15
     Alignment = taCenter
     AutoSize = False
-    Caption = 'WebLabel1'
+    Caption = 'TWebLabel - txtLocationText'
     ElementClassName = 'fs-3'
     ElementFont = efCSS
     HeightStyle = ssAuto
@@ -50,7 +50,7 @@ object FrmMain: TFrmMain
     Height = 15
     Alignment = taCenter
     AutoSize = False
-    Caption = 'WebLabel1'
+    Caption = 'TWebLabel - txtLocationNumbers'
     ElementClassName = 'fs-6'
     ElementFont = efCSS
     HeightStyle = ssAuto
@@ -65,7 +65,7 @@ object FrmMain: TFrmMain
     Height = 15
     Alignment = taCenter
     AutoSize = False
-    Caption = 'Your Weather Forecast'
+    Caption = 'TWebLabel - txtHeader'
     ElementClassName = 'display-4'
     ElementFont = efCSS
     HeightStyle = ssAuto

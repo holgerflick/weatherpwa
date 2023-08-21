@@ -113,6 +113,8 @@ end;
 
 procedure TFrmMain.WebFormCreate(Sender: TObject);
 begin
+  txtHeader.Caption := 'Your Weather Report';
+
   FService := TWeatherServiceManager.Create(self);
   FService.OnLocationUpdated := OnLocationUpdated;
   FService.OnForecastUpdated := OnForecastUpdated;
