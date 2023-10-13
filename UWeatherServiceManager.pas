@@ -62,7 +62,7 @@ const
   STORAGE_KEY_FORECAST = 'cached_forecast';
   STORAGE_KEY_DT_FORECAST = 'cached_forecast_dt';
 
-  API_KEY = '41bd2ec8a08aa94db50c45ab68ca71e8';
+  API_KEY = '-------';
 
 {$R *.dfm}
 
